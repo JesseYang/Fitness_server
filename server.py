@@ -90,7 +90,7 @@ class ServerAccept:
         try:
             # socket.setdefaulttimeout(5)
             print("server to client(addr:port)", addr)
-            send_client.connect((addr,8118))
+            send_client.connect((addr,8120))
         except socket.error as e:
             print("Error connecting to client: %s" % e )
             sys.exit()
