@@ -15,8 +15,8 @@ from threading import Event
 
 from detect import DetectThread
 from capture import CaptureThread
-from visualize import VisualizeGUI
-from audio import AudioThread
+# from visualize import VisualizeGUI
+# from audio import AudioThread
 
 from cfgs.config import cfg
 import pdb
@@ -25,7 +25,7 @@ import json
 import pickle
 
 
-class Server_Accept:
+class ServerAccept:
     def __init__(self, host='192.168.1.124', port=8117):
         print(os.getpid())
         self.host = host
@@ -47,12 +47,13 @@ class Server_Accept:
 
     def receive_data(self, conn, addr):
         print(os.getpid())
-        while 1:
+        while True:
             print(os.getpid())
             buf = b""
             data_len = -1
            
-            while 1:
+            # receive one image
+            while True:
                 tem_buf = conn.recv(self.bufsize)
                 buf += tem_buf
                 if data_len != -1 and data_len == len(buf):
@@ -81,8 +82,8 @@ class Server_Accept:
 
     def send_result(self, addr, port):
         try:
-            send_client =socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            send_client.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+            send_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            send_client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         except Exception as e:
             print("Error create socket")
         print("111")
@@ -93,7 +94,7 @@ class Server_Accept:
         except socket.error as e:
             print("Error connecting to client: %s" % e )
             sys.exit()
-        while 1:
+        while True:
             client_addr, ids, peak = self.result_queue.get()
 
             if ids == -1:
@@ -108,7 +109,7 @@ class Server_Accept:
 
     def socket_server(self):
         
-        self.s =socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
         try:
             self.s.bind((self.host,self.port))
@@ -140,5 +141,5 @@ class Server_Accept:
 
 if __name__ == '__main__':
 
-    server_accept = Server_Accept()
+    server_accept = ServerAccept()
     server_accept.deal_data()
