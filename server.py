@@ -49,6 +49,7 @@ class ServerAccept:
         print(os.getpid())
         while True:
             print(os.getpid())
+            receive_time = time.time()
             buf = b""
             data_len = -1
            
@@ -63,6 +64,7 @@ class ServerAccept:
                     data_len = img_size[0] + 8
 
             img_info = struct.unpack("i%ds" % (data_len - 8), buf[4:])
+            print("receive time ", str(time.time() - receive_time))
             img_id = img_info[0]
             if img_id == -1:
                 self.capture_queue.put([addr, -1, 0])
@@ -90,7 +92,7 @@ class ServerAccept:
         try:
             # socket.setdefaulttimeout(5)
             print("server to client(addr:port)", addr)
-            send_client.connect((addr,8120))
+            send_client.connect((addr,8121))
         except socket.error as e:
             print("Error connecting to client: %s" % e )
             sys.exit()
@@ -101,10 +103,10 @@ class ServerAccept:
                 send_client.close()
                 break
             result = pickle.dumps((ids, peak))
-            print("server send to client", addr, client_addr)
-            print(ids, peak)
+            # print("server send to client", addr, client_addr)
+            # print(ids, peak)
             send_client.send(result)
-            print("peak send over, pid ", os.getpid())
+            print("%d peak send over, pid %d" % ( ids, os.getpid()))
             
 
     def socket_server(self):

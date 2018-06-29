@@ -63,13 +63,13 @@ class DetectThread(Thread):
         while True:
             client_addr, frame_id, frame = self.capture_queue.get()
            
-            print("detect", frame_id, frame.shape)
+            # print("detect", frame_id, frame.shape)
             if frame_id == -1:
                 self.result_queue.put([client_addr, -1, 0])
                 continue
-            
+            start_time = time.time()
             peaks, img = detect(frame, self.predict_func, scale=0.5, draw_result=False)
-           
+            print("detect time: ", str(time.time()-start_time))
             # print("after detect")
             # print(img.shape)
             self.result_queue.put([client_addr, frame_id, [peaks]])
