@@ -184,8 +184,8 @@ class BackSquat(Action):
         img_bg = cv2.bitwise_and(img_resize, img_resize, mask=mask_inv)
         overlap_result_img = blend_fg + img_bg
 
-        result_img = np.zeros((cfg.output_height, 2 * cfg.output_width, 3), dtype=np.uint8)
-        result_img[:, :cfg.output_width] = img_resize
-        result_img[:, cfg.output_width:] = std_img
+        result_img = np.zeros((cfg.show_img_h, cfg.show_img_w, 3), dtype=np.uint8)
+        result_img[:, :cfg.show_img_w//2] = cv2.resize(img_resize, (cfg.show_img_w//2, cfg.show_img_h))
+        result_img[:, cfg.show_img_w//2:] = cv2.resize(std_img, (cfg.show_img_w//2, cfg.show_img_h))
 
         return tips, key_frame, result_img

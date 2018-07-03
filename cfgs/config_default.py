@@ -17,10 +17,17 @@ cfg.model_path = "model_files/mobilenetv2_pose_estimation"
 # for visualize
 cfg.std_data_dir = "std_data"
 
+cfg.batch_size = 8
+
 cfg.output_height = 640
 cfg.output_width = 480
 # cfg.output_height = 480
 # cfg.output_width = 800
+
+
+cfg.show_img_h = 250
+cfg.show_img_w = 400
+
 cfg.min_qsize = 10
 
 # for action

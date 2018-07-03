@@ -2,8 +2,9 @@ from queue import Queue
 from threading import Thread
 from threading import Lock
 from threading import Event
-
+import pdb
 import time
+from actions import *
 
 try:
     from .code_model.predict import *
@@ -21,7 +22,7 @@ def detect(img, predict_func, scale=0.25, draw_result=False):
     scale_img = cv2.resize(img, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC) if scale != 1 else img
     scale_img_expanded = np.expand_dims(scale_img, axis=0)
 
-    scale_img_expanded = np.concatenate([scale_img_expanded, scale_img_expanded, scale_img_expanded, scale_img_expanded, scale_img_expanded, scale_img_expanded, scale_img_expanded, scale_img_expanded], axis=0)
+    # scale_img_expanded = np.concatenate([scale_img_expanded, scale_img_expanded, scale_img_expanded, scale_img_expanded, scale_img_expanded, scale_img_expanded, scale_img_expanded, scale_img_expanded], axis=0)
 
     heatmap, paf = predict_func(scale_img_expanded)
     heatmap = cv2.resize(heatmap[0], (0,0), fx=model_cfg.stride, fy=model_cfg.stride, interpolation=cv2.INTER_CUBIC)
@@ -57,6 +58,7 @@ class DetectThread(Thread):
         self.predict_func = initialize(cfg.model_path)
         self.capture_queue = capture_queue
         self.result_queue = result_queue
+        self.action = BackSquat()
 
 
     def run(self):
@@ -69,7 +71,9 @@ class DetectThread(Thread):
                 continue
             start_time = time.time()
             peaks, img = detect(frame, self.predict_func, scale=0.5, draw_result=False)
-            print("detect time: ", str(time.time()-start_time))
+            tips, text, result_img = self.action.push_new_frame(peaks, cv2.resize(frame, (0, 0), fx=0.25, fy=0.25, interpolation=cv2.INTER_CUBIC))
+
+            print("detect time: ", str(time.time()-start_time), "frame id",frame_id)
             # print("after detect")
             # print(img.shape)
-            self.result_queue.put([client_addr, frame_id, [peaks]])
+            self.result_queue.put([frame_id, text, result_img])
