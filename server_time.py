@@ -100,32 +100,32 @@ class ServerAccept:
             print("Error connecting to client: %s" % e )
             sys.exit()
         while True:
-            frame_id, text, result_img = self.result_queue.get()
-            # print("text:",text)
-            if len(text) == 0:
-            	text = "ccc"
+            frame_id, tip, result_img = self.result_queue.get()
+           
             # if ids == -1:
             #     send_client.close()
             #     break
             send_time = time.time()
-            # print("send result start time ", send_time)
-            # result = pickle.dumps((ids, peak, send_time))
+    
             img_encode = cv2.imencode('.jpg', result_img)[1]
             img_code = np.array(img_encode)
             str_encode = img_code.tostring()
-         
             struc_2 = "ii%ds" % (len(str_encode))
             print(struc_2)
-
-            data2 = struct.pack(struc_2, int(len(str_encode)), int(frame_id), str_encode)
-
-            # print("server send to client", addr, client_addr)
-            # print(ids, peak)
-            send_client.send(data2)
-            # time.sleep(1)
+            # data2 = struct.pack(struc_2, int(len(str_encode)), int(frame_id), str_encode)
+            # tip = ['tips/back_squat/good_tip_1.wav', 'tips/back_squat/good_tip_2.wav']
+            tem_tip = ""
+            if len(tip) >= 2:
+                tem_tip="-".join(e for e in tip)
+            elif len(tip) == 1:
+                tem_tip = tip[0]
+            else:
+                continue
+            # data2 = struct.pack("%ds" % (len(tip)))
+            result=pickle.dumps((tem_tip))
+            send_client.send(result)
             print("%d peak send over, pid %d, total deal time:" % ( frame_id, os.getpid()))
             
-
     def socket_server(self):
         
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

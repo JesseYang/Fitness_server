@@ -73,7 +73,8 @@ class DetectThread(Thread):
             peaks, img = detect(frame, self.predict_func, scale=0.5, draw_result=False)
             tips, text, result_img = self.action.push_new_frame(peaks, cv2.resize(frame, (0, 0), fx=0.25, fy=0.25, interpolation=cv2.INTER_CUBIC))
 
-            print("detect time: ", str(time.time()-start_time), "frame id",frame_id)
+            if len(tips) >=1:
+                print("tis-------------------------", frame_id, tips)
             # print("after detect")
             # print(img.shape)
-            self.result_queue.put([frame_id, text, result_img])
+            self.result_queue.put([frame_id, tips, result_img])
