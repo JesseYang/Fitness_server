@@ -102,16 +102,17 @@ class ServerAccept:
         while True:
             frame_id, tip, result_img = self.result_queue.get()
            
-            # if ids == -1:
-            #     send_client.close()
-            #     break
+            if frame_id == -1:
+                send_client.close()
+                break
             send_time = time.time()
     
             img_encode = cv2.imencode('.jpg', result_img)[1]
             img_code = np.array(img_encode)
             str_encode = img_code.tostring()
             struc_2 = "ii%ds" % (len(str_encode))
-            print(struc_2)
+            # print(struc_2)
+
             # data2 = struct.pack(struc_2, int(len(str_encode)), int(frame_id), str_encode)
             # tip = ['tips/back_squat/good_tip_1.wav', 'tips/back_squat/good_tip_2.wav']
             tem_tip = ""
@@ -141,16 +142,16 @@ class ServerAccept:
         print(os.getpid())
 
     def deal_data(self):
-        while True:
-            conn, addr = self.s.accept()
-            print("accept new connection from {0}".format(addr))
-            t = threading.Thread(target=self.receive_data, args=(conn, addr))
-            t.start()
-            # self.wait_for_result()
-            # self.receive_data(conn, addr)
-            
-            t1 = threading.Thread(target=self.send_result, args=(addr))
-            t1.start()
+       
+        conn, addr = self.s.accept()
+        print("accept new connection from {0}".format(addr))
+        t = threading.Thread(target=self.receive_data, args=(conn, addr))
+        t.start()
+        # self.wait_for_result()
+        # self.receive_data(conn, addr)
+        
+        t1 = threading.Thread(target=self.send_result, args=(addr))
+        t1.start()
 
 
     def wait_for_result(self):
